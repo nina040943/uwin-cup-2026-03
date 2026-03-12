@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UWIN ScoreCentral | 2026 Uwin盃</title>
+    <link rel="icon" href="logo.jpg" type="image/jpeg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,700;1,900&display=swap');
+        
+        body { 
+            background: radial-gradient(circle at 50% 50%, #1A3A7A 0%, #061121 100%);
+            color: #ffffff; 
+            font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
+            min-height: 100vh;
+        }
+
+        .split-grid { display: grid; grid-template-columns: 1fr; gap: 40px; }
+        @media (min-width: 1024px) { .split-grid { grid-template-columns: 1fr 1fr; gap: 50px; } }
+
+        .uwin-text-a { color: #FFB915; }
+        .uwin-text-b { color: #009797; }
+        
+        .row-bg { background: rgba(255, 255, 255, 0.04); border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+        .rank-font { font-family: 'Barlow Condensed', sans-serif; font-style: italic; font-weight: 900; }
+        .score-font { font-family: 'Barlow Condensed', sans-serif; font-style: italic; font-weight: 900; }
+        
+        .is-qualifier { font-weight: 900; color: #ffffff; }
+        .is-normal { font-weight: 500; color: #ffffff; }
+        .solid-white { color: #ffffff !important; opacity: 1 !important; }
+
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    </style>
+</head>
+<body class="pb-24 px-4 md:px-10">
+    <div id="app">
+        
+        <header class="flex flex-col items-center pt-16 pb-12">
+            <img src="logo.jpg" alt="UWIN" class="w-32 h-auto mb-6">
+            <div class="text-center">
+                <h1 class="text-3xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">
+                    UWIN CUP <span class="uwin-text-a">2026</span>
+                </h1>
+                
+                <div class="flex flex-col items-center mt-6 space-y-2">
+                    <p class="text-[10px] font-black text-white/30 tracking-[0.4em] uppercase italic">
+                        Win: 3 PTS / Draw: 1 PTS / Loss: 0 PTS
+                    </p>
+                    <p class="text-[10px] font-black text-white/50 tracking-[0.2em] uppercase italic border-t border-white/10 pt-2 px-8">
+                        Top 4 Teams Advance to Playoffs
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-[1400px] mx-auto">
+            <div class="split-grid">
+                
+                <section>
+                    <div class="flex items-center mb-6 px-2">
+                        <h2 class="text-4xl font-black italic uwin-text-a tracking-tighter uppercase">Group A</h2>
+                        <div class="ml-6 h-[1px] flex-grow bg-white/10"></div>
+                    </div>
+                    
+                    <div class="flex items-center px-4 mb-2 text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">
+                        <div class="w-12 text-center italic">#</div>
+                        <div class="flex-grow pl-6">Team Name</div>
+                        <div class="w-24 text-center">W - D - L</div>
+                        <div class="w-16 text-center">Pts</div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <div v-for="(team, index) in sortedGroup('A')" :key="team.id" class="flex items-center overflow-hidden rounded-lg row-bg px-4">
+                            <div class="w-12 text-center rank-font text-3xl italic" :class="index < 4 ? 'uwin-text-a' : 'solid-white'">
+                                {{ index + 1 }}
+                            </div>
+                            <div class="flex-grow flex items-center h-[60px] pl-6 overflow-hidden">
+                                <span class="text-lg tracking-tight truncate mr-4" :class="index < 4 ? 'is-qualifier' : 'is-normal'">
+                                    {{ team.name }}
+                                </span>
+                                <div class="ml-auto flex items-center flex-shrink-0">
+                                    <span class="w-24 text-center text-xs font-bold font-mono italic text-white/30">
+                                        {{ team.wins }} - {{ team.draws }} - {{ team.losses }}
+                                    </span>
+                                    <div class="w-16 text-center score-font text-3xl italic" :class="index < 4 ? 'uwin-text-a' : 'solid-white'">
+                                        {{ (team.wins * 3) + (team.draws * 1) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <div class="flex items-center mb-6 px-2">
+                        <h2 class="text-4xl font-black italic uwin-text-b tracking-tighter uppercase">Group B</h2>
+                        <div class="ml-6 h-[1px] flex-grow bg-white/10"></div>
+                    </div>
+
+                    <div class="flex items-center px-4 mb-2 text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">
+                        <div class="w-12 text-center italic">#</div>
+                        <div class="flex-grow pl-6">Team Name</div>
+                        <div class="w-24 text-center">W - D - L</div>
+                        <div class="w-16 text-center">Pts</div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <div v-for="(team, index) in sortedGroup('B')" :key="team.id" class="flex items-center overflow-hidden rounded-lg row-bg px-4">
+                            <div class="w-12 text-center rank-font text-3xl italic" :class="index < 4 ? 'uwin-text-b' : 'solid-white'">
+                                {{ index + 1 }}
+                            </div>
+                            <div class="flex-grow flex items-center h-[60px] pl-6 overflow-hidden">
+                                <span class="text-lg tracking-tight truncate mr-4" :class="index < 4 ? 'is-qualifier' : 'is-normal'">
+                                    {{ team.name }}
+                                </span>
+                                <div class="ml-auto flex items-center flex-shrink-0">
+                                    <span class="w-24 text-center text-xs font-bold font-mono italic text-white/30">
+                                        {{ team.wins }} - {{ team.draws }} - {{ team.losses }}
+                                    </span>
+                                    <div class="w-16 text-center score-font text-3xl italic" :class="index < 4 ? 'uwin-text-b' : 'solid-white'">
+                                        {{ (team.wins * 3) + (team.draws * 1) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+        <div v-if="adminMode" class="fixed inset-0 z-50 bg-[#061121] p-8 overflow-y-auto border-t-8 border-white/20">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex justify-between items-center mb-10 border-b border-white/10 pb-6 text-white">
+                    <h3 class="text-2xl font-black italic uppercase text-white/90">Score Update</h3>
+                    <button @click="adminMode = false" class="bg-white text-black px-12 py-2 rounded-full font-black text-xs uppercase shadow-xl hover:scale-105 transition-all">Done</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div v-for="team in teams" :key="'admin'+team.id" class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+                        <input v-model="team.name" class="font-bold text-sm bg-transparent outline-none w-44 text-white">
+                        <div class="flex space-x-1">
+                            <input type="number" v-model.number="team.wins" class="w-10 h-10 bg-white/10 text-center font-bold text-sm rounded text-white" placeholder="W">
+                            <input type="number" v-model.number="team.draws" class="w-10 h-10 bg-white/10 text-center font-bold text-sm rounded text-white" placeholder="D">
+                            <input type="number" v-model.number="team.losses" class="w-10 h-10 bg-white/10 text-center font-bold text-sm rounded text-white" placeholder="L">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer @click="clickCount++" class="mt-32 text-center text-white/10 text-[10px] font-black tracking-[0.5em] cursor-pointer pb-20 uppercase">
+            UWIN SPORTS MANAGEMENT SYSTEM · 2026
+        </footer>
+    </div>
+
+    <script>
+        const { createApp, ref, computed, watch, onMounted } = Vue;
+        createApp({
+            setup() {
+                const adminMode = ref(false);
+                const clickCount = ref(0);
+                const teams = ref(JSON.parse(localStorage.getItem('uwin_final_v3')) || 
+                    Array.from({ length: 18 }, (_, i) => ({
+                        id: i + 1,
+                        group: i < 9 ? 'A' : 'B',
+                        name: `Team ${String(i + 1).padStart(2, '0')}`,
+                        wins: 0, draws: 0, losses: 0
+                    }))
+                );
+                const sortedGroup = (groupName) => {
+                    return [...teams.value]
+                        .filter(t => t.group === groupName)
+                        .sort((a, b) => {
+                            const scoreA = a.wins * 3 + a.draws;
+                            const scoreB = b.wins * 3 + b.draws;
+                            if (scoreB !== scoreA) return scoreB - scoreA;
+                            return b.wins - a.wins;
+                        });
+                };
+                watch(clickCount, (n) => { if (n >= 5) { adminMode.value = true; clickCount.value = 0; }});
+                watch(teams, (n) => localStorage.setItem('uwin_final_v3', JSON.stringify(n)), { deep: true });
+                return { teams, sortedGroup, adminMode, clickCount };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
