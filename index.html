@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UWIN ScoreCentral | 2026 Uwin盃</title>
+    <title>2026 Uwin盃計分版</title>
     <link rel="icon" href="logo.jpg" type="image/jpeg">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -31,6 +31,12 @@
         .is-normal { font-weight: 500; color: #ffffff; }
         .solid-white { color: #ffffff !important; opacity: 1 !important; }
 
+        /* 控制台按鈕 */
+        .btn-ctrl { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 6px; font-weight: bold; }
+        .btn-ctrl:active { background: rgba(255,255,255,0.3); transform: scale(0.9); }
+        .btn-plus { color: #FFB915; }
+        .btn-minus { color: #ef4444; }
+
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
@@ -43,19 +49,18 @@
                 <h1 class="text-3xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">
                     UWIN CUP <span class="uwin-text-a">2026</span>
                 </h1>
-                
                 <div class="flex flex-col items-center mt-6 space-y-2">
                     <p class="text-[10px] font-black text-white/30 tracking-[0.4em] uppercase italic">
-                        Win: 3 PTS / Draw: 1 PTS / Loss: 0 PTS
+                        勝: 3 分 / 平: 1 分 / 敗: 0 分
                     </p>
                     <p class="text-[10px] font-black text-white/50 tracking-[0.2em] uppercase italic border-t border-white/10 pt-2 px-8">
-                        Top 4 Teams Advance to Playoffs
+                        分組前四名晉級
                     </p>
                 </div>
             </div>
         </header>
 
-        <main class="max-w-[1400px] mx-auto">
+        <main class="max-w-[1440px] mx-auto">
             <div class="split-grid">
                 
                 <section>
@@ -65,15 +70,17 @@
                     </div>
                     
                     <div class="flex items-center px-4 mb-2 text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">
-                        <div class="w-12 text-center italic">#</div>
-                        <div class="flex-grow pl-6">Team Name</div>
-                        <div class="w-24 text-center">W - D - L</div>
-                        <div class="w-16 text-center">Pts</div>
+                        <div class="w-10 text-center italic">排名</div>
+                        <div class="flex-grow pl-6">隊伍名稱</div>
+                        <div class="w-20 text-center text-white/10">勝-平-敗</div>
+                        <div class="w-12 text-center text-white/10">勝局數</div>
+                        <div class="w-12 text-center text-white/10">敗局數</div>
+                        <div class="w-16 text-center">總積分</div>
                     </div>
 
                     <div class="space-y-1">
                         <div v-for="(team, index) in sortedGroup('A')" :key="team.id" class="flex items-center overflow-hidden rounded-lg row-bg px-4">
-                            <div class="w-12 text-center rank-font text-3xl italic" :class="index < 4 ? 'uwin-text-a' : 'solid-white'">
+                            <div class="w-10 text-center rank-font text-3xl italic" :class="index < 4 ? 'uwin-text-a' : 'solid-white'">
                                 {{ index + 1 }}
                             </div>
                             <div class="flex-grow flex items-center h-[60px] pl-6 overflow-hidden">
@@ -81,9 +88,9 @@
                                     {{ team.name }}
                                 </span>
                                 <div class="ml-auto flex items-center flex-shrink-0">
-                                    <span class="w-24 text-center text-xs font-bold font-mono italic text-white/30">
-                                        {{ team.wins }} - {{ team.draws }} - {{ team.losses }}
-                                    </span>
+                                    <span class="w-20 text-center text-xs font-bold font-mono text-white/10 italic">{{ team.wins }}-{{ team.draws }}-{{ team.losses }}</span>
+                                    <span class="w-12 text-center text-xs font-bold score-font text-white/20 italic uppercase">{{ team.sw }}</span>
+                                    <span class="w-12 text-center text-xs font-bold score-font text-white/20 italic uppercase">{{ team.sl }}</span>
                                     <div class="w-16 text-center score-font text-3xl italic" :class="index < 4 ? 'uwin-text-a' : 'solid-white'">
                                         {{ (team.wins * 3) + (team.draws * 1) }}
                                     </div>
@@ -100,15 +107,17 @@
                     </div>
 
                     <div class="flex items-center px-4 mb-2 text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">
-                        <div class="w-12 text-center italic">#</div>
-                        <div class="flex-grow pl-6">Team Name</div>
-                        <div class="w-24 text-center">W - D - L</div>
-                        <div class="w-16 text-center">Pts</div>
+                        <div class="w-10 text-center italic">排名</div>
+                        <div class="flex-grow pl-6">隊伍名稱</div>
+                        <div class="w-20 text-center text-white/10">勝-平-敗</div>
+                        <div class="w-12 text-center text-white/10">勝局數</div>
+                        <div class="w-12 text-center text-white/10">敗局數</div>
+                        <div class="w-16 text-center">總積分</div>
                     </div>
 
                     <div class="space-y-1">
                         <div v-for="(team, index) in sortedGroup('B')" :key="team.id" class="flex items-center overflow-hidden rounded-lg row-bg px-4">
-                            <div class="w-12 text-center rank-font text-3xl italic" :class="index < 4 ? 'uwin-text-b' : 'solid-white'">
+                            <div class="w-10 text-center rank-font text-3xl italic" :class="index < 4 ? 'uwin-text-b' : 'solid-white'">
                                 {{ index + 1 }}
                             </div>
                             <div class="flex-grow flex items-center h-[60px] pl-6 overflow-hidden">
@@ -116,9 +125,9 @@
                                     {{ team.name }}
                                 </span>
                                 <div class="ml-auto flex items-center flex-shrink-0">
-                                    <span class="w-24 text-center text-xs font-bold font-mono italic text-white/30">
-                                        {{ team.wins }} - {{ team.draws }} - {{ team.losses }}
-                                    </span>
+                                    <span class="w-20 text-center text-xs font-bold font-mono text-white/10 italic">{{ team.wins }}-{{ team.draws }}-{{ team.losses }}</span>
+                                    <span class="w-12 text-center text-xs font-bold score-font text-white/20 italic uppercase">{{ team.sw }}</span>
+                                    <span class="w-12 text-center text-xs font-bold score-font text-white/20 italic uppercase">{{ team.sl }}</span>
                                     <div class="w-16 text-center score-font text-3xl italic" :class="index < 4 ? 'uwin-text-b' : 'solid-white'">
                                         {{ (team.wins * 3) + (team.draws * 1) }}
                                     </div>
@@ -131,27 +140,66 @@
             </div>
         </main>
 
-        <div v-if="adminMode" class="fixed inset-0 z-50 bg-[#061121] p-8 overflow-y-auto border-t-8 border-white/20">
-            <div class="max-w-4xl mx-auto">
-                <div class="flex justify-between items-center mb-10 border-b border-white/10 pb-6 text-white">
-                    <h3 class="text-2xl font-black italic uppercase text-white/90">Score Update</h3>
-                    <button @click="adminMode = false" class="bg-white text-black px-12 py-2 rounded-full font-black text-xs uppercase shadow-xl hover:scale-105 transition-all">Done</button>
+        <div v-if="adminMode" class="fixed inset-0 z-50 bg-[#061121] p-4 md:p-8 overflow-y-auto border-t-8 border-white/20">
+            <div class="max-w-5xl mx-auto">
+                <div class="flex justify-between items-center mb-8 border-b border-white/10 pb-6 text-white">
+                    <h3 class="text-xl font-black italic uppercase text-white/90 tracking-wider">後台分數控制台</h3>
+                    <button @click="adminMode = false" class="bg-white text-black px-10 py-2 rounded-full font-black text-xs uppercase shadow-xl hover:scale-105 transition-all">儲存並關閉</button>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div v-for="team in teams" :key="'admin'+team.id" class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
-                        <input v-model="team.name" class="font-bold text-sm bg-transparent outline-none w-44 text-white">
-                        <div class="flex space-x-1">
-                            <input type="number" v-model.number="team.wins" class="w-10 h-10 bg-white/10 text-center font-bold text-sm rounded text-white" placeholder="W">
-                            <input type="number" v-model.number="team.draws" class="w-10 h-10 bg-white/10 text-center font-bold text-sm rounded text-white" placeholder="D">
-                            <input type="number" v-model.number="team.losses" class="w-10 h-10 bg-white/10 text-center font-bold text-sm rounded text-white" placeholder="L">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div v-for="team in teams" :key="'admin'+team.id" class="flex flex-col p-5 bg-white/5 rounded-2xl border border-white/5">
+                        <input v-model="team.name" class="font-black text-lg bg-transparent outline-none w-full text-white mb-4 border-b border-white/10 pb-2">
+                        
+                        <div class="grid grid-cols-5 gap-2 text-center">
+                            <div class="flex flex-col items-center">
+                                <span class="text-[9px] font-bold text-gray-500 mb-2 uppercase">勝</span>
+                                <div class="flex items-center space-x-1">
+                                    <button @click="team.wins = Math.max(0, team.wins - 1)" class="btn-ctrl btn-minus">-</button>
+                                    <span class="w-6 font-bold text-sm">{{ team.wins }}</span>
+                                    <button @click="team.wins++" class="btn-ctrl btn-plus">+</button>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-center border-l border-white/5">
+                                <span class="text-[9px] font-bold text-gray-500 mb-2 uppercase">平</span>
+                                <div class="flex items-center space-x-1">
+                                    <button @click="team.draws = Math.max(0, team.draws - 1)" class="btn-ctrl btn-minus">-</button>
+                                    <span class="w-6 font-bold text-sm">{{ team.draws }}</span>
+                                    <button @click="team.draws++" class="btn-ctrl btn-plus">+</button>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-center border-l border-white/5">
+                                <span class="text-[9px] font-bold text-gray-500 mb-2 uppercase">敗</span>
+                                <div class="flex items-center space-x-1">
+                                    <button @click="team.losses = Math.max(0, team.losses - 1)" class="btn-ctrl btn-minus">-</button>
+                                    <span class="w-6 font-bold text-sm">{{ team.losses }}</span>
+                                    <button @click="team.losses++" class="btn-ctrl btn-plus">+</button>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-center border-l border-white/5">
+                                <span class="text-[9px] font-bold text-yellow-500/50 mb-2 uppercase italic">勝局數</span>
+                                <div class="flex items-center space-x-1">
+                                    <button @click="team.sw = Math.max(0, team.sw - 1)" class="btn-ctrl btn-minus">-</button>
+                                    <span class="w-6 font-bold text-sm text-yellow-500">{{ team.sw }}</span>
+                                    <button @click="team.sw++" class="btn-ctrl btn-plus">+</button>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-center border-l border-white/5">
+                                <span class="text-[9px] font-bold text-gray-500 mb-2 uppercase italic">敗局數</span>
+                                <div class="flex items-center space-x-1">
+                                    <button @click="team.sl = Math.max(0, team.sl - 1)" class="btn-ctrl btn-minus">-</button>
+                                    <span class="w-6 font-bold text-sm text-gray-400">{{ team.sl }}</span>
+                                    <button @click="team.sl++" class="btn-ctrl btn-plus">+</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <button @click="resetData" class="mt-20 w-full py-6 text-white/5 text-[9px] font-black tracking-[1em] hover:text-red-500 transition-colors uppercase italic">Reset Tournament Data</button>
             </div>
         </div>
 
         <footer @click="clickCount++" class="mt-32 text-center text-white/10 text-[10px] font-black tracking-[0.5em] cursor-pointer pb-20 uppercase">
-            UWIN SPORTS MANAGEMENT SYSTEM · 2026
+            © 2026 UWIN SCORE MANAGEMENT
         </footer>
     </div>
 
@@ -161,12 +209,13 @@
             setup() {
                 const adminMode = ref(false);
                 const clickCount = ref(0);
-                const teams = ref(JSON.parse(localStorage.getItem('uwin_final_v3')) || 
+                const teams = ref(JSON.parse(localStorage.getItem('uwin_final_v9')) || 
                     Array.from({ length: 18 }, (_, i) => ({
                         id: i + 1,
                         group: i < 9 ? 'A' : 'B',
                         name: `Team ${String(i + 1).padStart(2, '0')}`,
-                        wins: 0, draws: 0, losses: 0
+                        wins: 0, draws: 0, losses: 0,
+                        sw: 0, sl: 0
                     }))
                 );
                 const sortedGroup = (groupName) => {
@@ -176,12 +225,14 @@
                             const scoreA = a.wins * 3 + a.draws;
                             const scoreB = b.wins * 3 + b.draws;
                             if (scoreB !== scoreA) return scoreB - scoreA;
-                            return b.wins - a.wins;
+                            if (b.sw !== a.sw) return b.sw - a.sw;
+                            return a.sl - b.sl;
                         });
                 };
+                const resetData = () => { if(confirm('⚠️ 確定要重設所有隊伍的分數嗎？')) { teams.value.forEach(t => { t.wins=0; t.draws=0; t.losses=0; t.sw=0; t.sl=0; }); }};
                 watch(clickCount, (n) => { if (n >= 5) { adminMode.value = true; clickCount.value = 0; }});
-                watch(teams, (n) => localStorage.setItem('uwin_final_v3', JSON.stringify(n)), { deep: true });
-                return { teams, sortedGroup, adminMode, clickCount };
+                watch(teams, (n) => localStorage.setItem('uwin_final_v9', JSON.stringify(n)), { deep: true });
+                return { teams, sortedGroup, adminMode, clickCount, resetData };
             }
         }).mount('#app');
     </script>
